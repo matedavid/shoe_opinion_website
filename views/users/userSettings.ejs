@@ -1,0 +1,29 @@
+<%- include('../header.ejs') %>
+    <div class="row">
+        <div class="col-4">
+            <div style="background-color: red">
+                <h1>Avatar</h1>
+            </div>
+
+            <div style="text-align:center">
+                <button id="changeAvatar" class="btn btn-info">Change Avatar</button>
+            </div>
+            
+        </div>
+
+        <div class="col-8">
+            <h3 class="settings-info">Username: <span class="info"><%=settingsUser.username%></span></h2>
+            <button id="changeUsername" class="btn btn-info settings-info">Change Username</button>
+            <h3 class="settings-info">Password: <span class="info">********</span></h2>
+            <button id="changePassword" class="btn btn-info settings-info">Change Password</button>
+            <h3 class="settings-info">Email: <span class="info"><%=settingsUser.email%></span></h2>
+            <button id="changeEmail" class="btn btn-info settings-info">Change Email</button>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="replaceForm" id="/users/<%=settingsUser.id%>/settings/"></div>
+    
+    <script src="/js/settingsView.js"></script>
+<%- include('../footer.ejs') %>

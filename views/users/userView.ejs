@@ -1,0 +1,33 @@
+<%-include('../header.ejs');%>
+    <div class="row" style="margin-bottom: 50px">
+        <div class="col-4" style="background-color: red"><h1>Avatar</h1></div>
+        <div class="col-8" style="text-align: center">
+            <h1><%=userInput.username%><h1>
+            <% if (locals.user) { %>
+                <% if (locals.user.id == userInput._id) { %>
+                    <a href="/users/<%=userInput.id%>/settings" style="text-decoration: none"><button class="btn btn-lg btn-success">Settings</button></a>
+                <% } %>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="row">
+        <% if (uploaded.length > 0)  { %>
+            <div class="row" style="margin-bottom: 10px">
+                <h4 class="col-12">Uploaded shoes:</h4>
+            </div>
+            <% for (var i = 0; i < uploaded.length; i++) { %>
+                <div class="card col-12 row" style="margin-bottom: 15px">
+                    <div class="card-body col-6">
+                        <h4 class="card-title user-uploaded-shoe"><%=uploaded[i].name%></h4>
+                        <h5 class="card-text info user-uploaded-shoe">Rating: <%=uploaded[i].stars%> <i class="fa fa-star" style="color: orange"></i></h5>
+                        <h5 class="card-text info user-uploaded-shoe">Comments: <%=uploaded[i].numberComments%> <i class="fa fa-comments"></i></h5>
+                        <a href="/shoes/<%=uploaded[i].id%>"><button class="btn btn-primary btn-md">Check it out!</button></a>
+                    </div>
+                </div>
+            <% } %>
+        <% } else { %>
+            <h4>This user hasn't uploaded any shoes</h4>
+        <% } %>
+    </div>
+<%- include('../footer.ejs'); %>

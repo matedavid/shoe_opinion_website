@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Shoe Opinion - <%= title  %></title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="/icons/css/font-awesome.min.css">
+    <link rel="stylesheet" type='text/css' href="/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/custom.css">
+
+    <!-- Javascript -->
+    <script src="/jquery/jquery.js"></script>
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div class="row navbar navbar-dark navbar-inline bg-dark" style="margin-bottom: 20px">
+    <!-- Logo -->
+        <div class="navbar-brand navbar-inline col-sm logo-custom">
+            <a style="text-align: center; text-decoration: none" href="/">
+                <!-- <img src="/images/logo.png" width="120" alt="">-->
+                <h1 style="color: white">Shoe Opinion</h1>
+            </a>
+        </div>
+
+    <!-- Search Bar -->
+        <div class="navbar-inline col-md navbar-center-custom">
+            <form class="form-inline" action="/search/" action="GET">
+                <div class="form-group">
+                    <select class="form-control">
+                        <option>All types</option>
+                        <option>Sport</option>
+                    </select>
+                </div>  
+                <div class="form-group">
+                    <input class="form-control m-2" type="text" name="shoe_search" id="shoe-search" placeholder="Search">
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary m-2 form-control" type="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+
+    <!-- User -->
+        <div class="navbar-inline col-sm navbar-center-custom">
+        <% if (locals.user) { %>
+            <div class="dropdown">
+            <button class="btn btn-info btn-lg dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true">
+                <%= locals.user.username%>
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                <button class="dropdown-item btn user-button" href="/users/<%=locals.user.id%>" type="button">User</button>
+                <button class="dropdown-item btn settings-button" type="button" href="/users/<%=locals.user.id%>/settings">Settings</button>
+                <button class="dropdown-item btn btn-success add-shoe-button">Add a new Shoe</button>
+                <button class="dropdown-item btn btn-danger logout-button">Log Out</button>
+            </div>
+            </div>
+        <%  } else { %>
+            <button id="no" class="btn btn-info btn-lg login-button" style="color: white; text-align: center">Log In</button>
+        <% } %>
+        </div>
+    </div>
+
+    <div class='container'>
+        <%- messages('message', locals) %>
+        <% if (errors) { %>
+            <% for (let i = 0; i < errors.length; i++) { %>
+                <div class="alert alert-danger"><%= errors[i].msg %></div>
+            <% }; %>
+        <% } %>

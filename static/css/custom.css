@@ -1,0 +1,107 @@
+/* Header page CSS */
+.navbar-center-custom {
+    text-align: center;
+}
+
+.logo-custom {
+    margin-left: 5%;
+}
+
+/* Home page CSS */
+.custom-image-div {
+    color: black;
+    transition: opacity 1s;
+}
+
+.custom-image-div:hover {
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 1s;
+}
+
+
+/* Search page CSS */
+.no-results {
+    position: relative;
+    margin: auto;
+    margin-top: 40px;
+}
+
+/* Shoe search CSS */
+.shoe-title {
+    margin: auto;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.info {
+    font-weight: normal;
+}
+
+.shoe-comment {
+    margin: 15px 0 10px 0;
+    border-bottom: ridge 1px grey;
+    padding-bottom: 5px;
+}
+
+#comment-form * {
+    margin-top: 10px;
+}
+
+.timeout {
+    width: 50%;
+    margin: auto;
+    color: green;
+    margin-top: 20px;
+    transition: opacity 1s;
+    padding: 2px;
+    border: green solid 1px;
+}
+
+.timeout-over {
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+/* Alert reconfigure */
+.alert-error {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+
+.alert-succes_msg {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+/* Star rating styling */
+.star, .star-form {
+    margin-right: 10px;
+    font-size: 25px;
+}
+
+.star-form {
+    /*opacity: 0;*/
+    margin-right: 10px;
+}
+
+.checked {
+    color: orange;
+}
+
+.user-uploaded-shoe {
+    padding-bottom: 10px;
+}
+
+/* Settings */
+.settings-info {
+    /*margin-bottom: 15px;
+    margin-left: 10px;*/
+    margin: 10px 0 15px 10px;
+}
+
+.settings-form * {
+    margin-bottom: 10px;
+}

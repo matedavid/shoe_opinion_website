@@ -1,0 +1,53 @@
+<%- include('../header'); -%>
+
+    <div class="row">
+        <div class="col-6">
+            <img style="border: 2px solid grey" src="<%=shoe.image%>" alt="<%=shoe.name%>" height="100%" width="100%">
+        </div>
+        <div class="col-6" id="form-replace">
+            <h2 class="shoe-title" id="<%=shoe.id%>">Shoe: <span class="info"><%=shoe.name%></span> 
+                Brand: <span class="info"><%=shoe.brand%></span></h2>
+            <h3 class="shoe-title">Uploaded by: <a href="/users/<%=shoe.uploader.id%>" class="info"><%=shoe.uploader.name%></a></h3>
+            <p class="stars shoe-title" value="<%=shoe.stars%>"></p>
+            
+            <div class="col-12 text-center" id="form">
+                <button class="btn btn-outline-success center-block btn-lg" id="button-replace">Comment on the Shoe</button>
+
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <h4 style="margin-top: 20px">Comments:</h4>
+
+    <div class="col-12">
+        <% if (shoe.comments.length > 0) { %>
+            <% for (let i = 0; i < authors.length; i++) { %>
+                <% let comment = shoe.comments[i]; %>
+                <div class="shoe-comment">
+                    <h5>Title: <span class="info"><%=comment.title%></span></h5>
+                    <% if (authors[i].id != "false") { %>
+                        <h6>By: <a class="info" href="/users/<%=comment.from%>"><%= authors[i].username %></a></h6>
+                    <% } else { %>
+                        <h6>By: <a class="info"><%= comment.display %></a></h6>
+                    <% } %>
+                    <p><%=comment.comment%></p>
+                    <p><%=comment.likes%>    <i class="fa fa-heart-o"></i>  
+                        <%=comment.dislikes%>    <i class="fa fa-thumbs-o-down" syle="margin-bottom: 10px"></i></p>
+                    <p><strong>On:</strong> <%=comment.date.toJSON().slice(0,10).replace(/-/g,'/'); %></p>
+                    <% if (locals.user) {  %>
+                        <% if (locals.user.id == authors[i].id) { %>
+                            <button href="/shoes/<%= shoe.id%>/<%=comment.id%>" class="btn btn-danger delete-button" style="clear: both">Delete comment</button>
+                        <% } %>
+                    <% } %>
+                </div>
+            <% } %>
+        <% } else {%>
+            <h3 style="margin-top: 20px">This shoe has no comments, be the first one to add one</h3>
+        <% } %>
+    </div>
+    
+    <script src="/js/shoeView.js"></script>
+
+<%-include('../footer')-%>

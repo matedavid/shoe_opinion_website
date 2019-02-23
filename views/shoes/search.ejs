@@ -1,0 +1,24 @@
+<%- include('../header') -%>
+
+    <% if (found) { %>
+        <% let result = shoeResults.length == 1 ? "result" : "results"; %>
+        <h2><%=shoeResults.length%> search <%=result%> for <span class="info">'<%= search %>'</span>:</h2>
+    <% } %>
+
+    <div class="row">
+        <% if (found) { %>
+            <% for (let i = 0; i < shoeResults.length; i++) { %>
+                <% let shoe = shoeResults[i]; %>
+                <div class="col-3">
+                    <a href="/shoes/<%=shoe.id%>" class="custom-image-div">
+                        <img src="<%=shoe.image%>" width="100%" height="100%" alt="<%=shoe.name%> image">
+                        <hr />
+                        <p style="text-align: center"><%=shoe.name%></p>
+                    </a>
+                </div>
+            <% } %>
+        <% } else { %>
+            <h4 class="no-results">No search results</h4>
+        <% } %>
+    </div>
+<%-include('../footer')-%>
