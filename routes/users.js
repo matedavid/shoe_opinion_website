@@ -7,6 +7,8 @@ const bcrypt = require('bcrypt');
 const User = require('./../models/User');
 const Shoe = require('../models/Shoe');
 
+const { storage, upload, convertImageBinary } = require("./upload");
+
 // Passoword encoding
 const saltRounds = 10;
 
@@ -17,7 +19,7 @@ router.get("/", (req, res) => {
 
 // login User
 router.get("/login", (req, res) => {
-    res.render("users/login", {title: "Log In"});
+    res.render("users/login", { title: "Log In" });
 });
 
 router.post("/login", (req, res, next) => {
@@ -29,7 +31,7 @@ router.post("/login", (req, res, next) => {
 
     let errors = req.validationErrors();
     if (errors) {
-        res.render("users/login", {title: "Log In", errors: errors});
+        res.render("users/login", { title: "Log In", errors: errors });
     } else {
         passport.authenticate('local', {
             successRedirect: "/",
@@ -42,7 +44,7 @@ router.post("/login", (req, res, next) => {
 
 // Register view rendering
 router.get("/register", (req, res) => {
-    res.render('users/register', {title: "Register"});
+    res.render('users/register', { title: "Register" });
 })
 
 // Registration process
@@ -51,7 +53,7 @@ router.post("/register/", (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     const passwordConfirmation = req.body.passwordConfirmation;
-    
+
     req.checkBody('username', 'Username field required').notEmpty();
     req.checkBody('email', 'Email field required').notEmpty();
     req.checkBody('email', 'Email is not valid').isEmail();
@@ -62,7 +64,7 @@ router.post("/register/", (req, res) => {
     let errors = req.validationErrors();
 
     if (errors) {
-        res.render('users/register', {title: "Register", errors: errors});
+        res.render('users/register', { title: "Register", errors: errors });
     } else {
         const newUser = new User({
             username: username,
@@ -88,11 +90,11 @@ router.post("/register/", (req, res) => {
 });
 
 // Logout 
-router.get('/logout', (req, res) => {    
+router.get('/logout', (req, res) => {
     if (req.user) {
         req.logout();
         req.flash('success', 'Succesfully logged out');
-    
+
         res.redirect('/');
     } else {
         req.flash('danger', 'Sign in first');
@@ -104,9 +106,8 @@ router.get('/logout', (req, res) => {
 // View of the user
 router.get('/:id', (req, res) => {
     User.findById(req.params.id, (err, user) => {
-        // console.log(user)
-        if (err){
-            res.render("users/noFoundUser", {title: "No user"});
+        if (err) {
+            res.render("users/noFoundUser", { title: "No user" });
         } else {
             let shoes = [];
             if (user.uploadedShoes.length > 0) {
@@ -114,13 +115,13 @@ router.get('/:id', (req, res) => {
                     Shoe.findById(user.uploadedShoes[i].shoeId, (err, shoe) => {
                         if (err) throw err;
                         shoes.push(shoe);
-                        if (i == user.uploadedShoes.length-1) {
-                            res.render('users/userView', {title: user.username, userInput: user, uploaded: shoes});
+                        if (i == user.uploadedShoes.length - 1) {
+                            res.render('users/userView', { title: user.username, userInput: user, uploaded: shoes });
                         }
                     })
                 }
             } else {
-                res.render('users/userView', {title: user.username, userInput: user, uploaded: []});
+                res.render('users/userView', { title: user.username, userInput: user, uploaded: [] });
             }
         }
     })
@@ -131,7 +132,7 @@ router.get('/:id/settings', (req, res) => {
     if (req.user) {
         User.findById(req.user.id, (err, user) => {
             if (err) throw err;
-            res.render('users/userSettings', {title: "Settings", settingsUser: user});
+            res.render('users/userSettings', { title: "Settings", settingsUser: user });
         });
     } else {
         req.flash('danger', "You need to be logged in");
@@ -139,8 +140,8 @@ router.get('/:id/settings', (req, res) => {
     }
 });
 
-// Change settings 
-router.post('/:id/settings/:toChange', (req, res, next) => {
+// Change settings
+router.post('/:id/settings/:toChange', upload.single('image'), (req, res, next) => {
     if (req.user) {
         User.findById(req.params.id, (err, changeUser) => {
             if (err) throw err;
@@ -165,7 +166,7 @@ router.post('/:id/settings/username', (req, res) => {
         let errors = req.validationErrors();
         if (errors) {
             req.flash("danger", "An error occured, try again");
-            res.redirect("/user/"+updateUser.id+"/settings")
+            res.redirect("/user/" + updateUser.id + "/settings")
         }
         updateUser.username = newUsername;
         if (updateUser.uploadedShoes.length > 0) {
@@ -180,9 +181,9 @@ router.post('/:id/settings/username', (req, res) => {
         updateUser.save((err) => {
             if (err) throw err;
             req.flash("success", "Usename changed succesfully");
-            res.redirect("/users/"+updateUser.id);
+            res.redirect("/users/" + updateUser.id);
         });
-        
+
     })
 });
 
@@ -198,7 +199,7 @@ router.post('/:id/settings/password', (req, res) => {
         if (errors) {
             console.log(errors)
             req.flash("danger", "An error occured, try again");
-            res.redirect("/users/"+updateUser.id+"/settings")
+            res.redirect("/users/" + updateUser.id + "/settings")
         }
         bcrypt.compare(oldPassword, updateUser.password, (err, equal) => {
             if (err) throw err;
@@ -211,16 +212,16 @@ router.post('/:id/settings/password', (req, res) => {
                             updateUser.save((err) => {
                                 if (err) throw err;
                                 req.flash('success', 'Password changed succesfully');
-                                res.redirect('/users/'+updateUser.id+"/settings");
+                                res.redirect('/users/' + updateUser.id + "/settings");
                             });
                         }
                     });
                 })
             } else {
                 req.flash("danger", "Old password is not correct, try again");
-                res.redirect("/users/"+updateUser.id+"/settings")
+                res.redirect("/users/" + updateUser.id + "/settings")
             }
-        })        
+        })
     })
 });
 
@@ -233,16 +234,31 @@ router.post('/:id/settings/email', (req, res) => {
         let errors = req.validationErrors();
         if (errors) {
             req.flash("danger", "An error occured, try again");
-            res.redirect("/users/"+updateUser.id+"/settings");
-        } 
+            res.redirect("/users/" + updateUser.id + "/settings");
+        }
         updateUser.email = newEmail;
         updateUser.save((err) => {
             if (err) throw err;
             //req.logout();
             req.flash("success", "Email changed succesfully");
-            res.redirect("/users/"+updateUser.id);
+            res.redirect("/users/" + updateUser.id);
         });
     })
-})
+});
+
+router.post('/:id/settings/avatar', upload.single('image'), (req, res) => {
+    const imageData = convertImageBinary('temp/' + req.file.filename);
+
+    User.findById(req.params.id, (err, updateUser) => {
+        if (err) throw err;
+        updateUser.avatar = imageData;
+        updateUser.save((err) => {
+            if (err) throw err;
+            else {
+                res.redirect("/users/" + updateUser.id);
+            }
+        })
+    });
+});
 
 module.exports = router;

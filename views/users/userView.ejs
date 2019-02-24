@@ -1,6 +1,6 @@
 <%-include('../header.ejs');%>
     <div class="row" style="margin-bottom: 50px">
-        <div class="col-4" style="background-color: red"><h1>Avatar</h1></div>
+        <div class="col-4"><img style="width: 100%; height: auth;" src="<%=userInput.avatar %>"></img></div>
         <div class="col-8" style="text-align: center">
             <h1><%=userInput.username%><h1>
             <% if (locals.user) { %>

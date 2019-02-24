@@ -1,112 +1,69 @@
 const express = require('express');
 const router = express.Router();
-const fs = require('fs');
-
-const multer = require('multer');
-const path = require('path');
 
 const Shoe = require("./../models/Shoe")
 const User = require('./../models/User')
 
-// Shoe imaage upload configuration
-const storage = multer.diskStorage({
-    destination: "./temp/",
-    filename: (req, file, cb) => {
-        cb(null, file.originalname + "-" + req.user.username + "-" + Date.now() + path.extname(file.originalname));
-    }
-});
-
-// Image converter
-function convertImageBinary(imgPath) {
-    var image = fs.readFileSync(imgPath);
-    const imageData = new Buffer(image).toString('base64');
-    image = "data: image/png;base64," + imageData;
-    fs.unlinkSync(imgPath);
-    return image;
-}
-
-const upload = multer({
-    storage: storage,
-    limits: {fileSize: 16000000},
-    fileFilter: (req, file, cb) => {
-        const fileTypes = /jpeg|jpg|png|gif/;
-        const extName = fileTypes.test(path.extname(file.originalname).toLowerCase());
-        const mimetype = fileTypes.test(file.mimetype);
-
-        if (mimetype && extName) {
-            return cb(null, true);
-        } else {
-            cb('Error: Images only', false)
-        }
-    }
-}).single('image');
-
-// ============================================== //
+const { storage, upload, convertImageBinary } = require("./upload");
 
 // Add a shoe
 router.get('/add', (req, res) => {
     if (req.user) {
-        res.render('shoes/addShoe', {title: "Add Shoe"});
+        res.render('shoes/addShoe', { title: "Add Shoe" });
     } else {
         req.flash('danger', 'To add a shoe you need to be logged in');
         res.redirect("/users/login");
     }
-    
+
 });
 
 // Add a shoe
-router.post('/add', (req, res) => {
+router.post('/add', upload.single('image'), (req, res) => {
     if (req.user) {
-        upload(req, res, (err) => {
-            if (err) {
-                res.render('shoes/addShoe', {title: "Add Shoe", errors: err});
-            } else {
-                // Validation
-                const name = req.body.shoeName;
-                const brand = req.body.brand;
-                const type = req.body.type;
-                const image = req.body.image;
-                
-                req.checkBody('shoeName', 'Name field is required').notEmpty();
-                req.checkBody('brand', 'Brand field is required').notEmpty();
-                req.checkBody('type', 'Type field is required').notEmpty();
-                
-                let errors = req.validationErrors();
-        
-                if (errors) {
-                    res.render('shoes/addShoe', {title: "Add Shoe", errors: errors});
-                } else {
-                    // Logic of validation and saving
-                    const imageData = convertImageBinary("temp/" + req.file.filename);
-                    const newShoe = new Shoe({
-                        name: name,
-                        uploader: {id: req.user.id, name: req.user.username},
-                        brand: brand,
-                        comments: [],
-                        stars: 0,
-                        timesRated: 0,
-                        image: imageData,
-                        type: type,
-                        numberComments: 0
-                    });
+        // Validation
+        const name = req.body.shoeName;
+        const brand = req.body.brand;
+        const type = req.body.type;
+        const image = req.body.image;
 
-                    User.findById(req.user.id, (err, user) => {
-                        if (err) throw err;
-                        user.uploadedShoes.push({shoeId: newShoe.id});
-                        user.save();
-                        newShoe.save((err) => {
-                            if (err) throw err;
-                            else {
-                                //console.log(user.uploadedShoes);
-                                req.flash('success', "Shoe added succesfully");
-                                res.redirect("/");
-                            }
-                        });
-                    });
-                }
-            }
-        });
-        
+        req.checkBody('shoeName', 'Name field is required').notEmpty();
+        req.checkBody('brand', 'Brand field is required').notEmpty();
+        req.checkBody('type', 'Type field is required').notEmpty();
+
+        let errors = req.validationErrors();
+
+        if (errors) {
+            res.render('shoes/addShoe', { title: "Add Shoe", errors: errors });
+        } else {
+            // Logic of validation and saving
+            const imageData = convertImageBinary("temp/" + req.file.filename);
+            const newShoe = new Shoe({
+                name: name,
+                uploader: { id: req.user.id, name: req.user.username },
+                brand: brand,
+                comments: [],
+                stars: 0,
+                timesRated: 0,
+                image: imageData,
+                type: type,
+                numberComments: 0
+            });
+
+            User.findById(req.user.id, (err, user) => {
+                if (err) throw err;
+                user.uploadedShoes.push({ shoeId: newShoe.id });
+                user.save();
+                newShoe.save((err) => {
+                    if (err) throw err;
+                    else {
+                        //console.log(user.uploadedShoes);
+                        req.flash('success', "Shoe added succesfully");
+                        res.redirect("/");
+                    }
+                });
+            });
+        }
+
     } else {
         req.flash('danger', 'To add a shoe you need to be logged in');
         res.redirect("/users/login")
@@ -116,9 +73,9 @@ router.post('/add', (req, res) => {
 function checkFinished(res, shoe, authors, errors, locals) {
     if (authors.length == shoe.comments.length) {
         if (locals != undefined) {
-            res.render("shoes/shoe", {title: shoe.name, shoe: shoe, authors: authors, errors: errors, locals: locals});
+            res.render("shoes/shoe", { title: shoe.name, shoe: shoe, authors: authors, errors: errors, locals: locals });
         } else {
-            res.render("shoes/shoe", {title: shoe.name, shoe: shoe, authors: authors});
+            res.render("shoes/shoe", { title: shoe.name, shoe: shoe, authors: authors });
         }
     }
 }
@@ -135,7 +92,7 @@ function getAuthorsAndRender(shoe, res) {
                 checkFinished(res, shoe, authors);
             });
         } else {
-            authors.push({"id": "false", "username": "false"});
+            authors.push({ "id": "false", "username": "false" });
             checkFinished(res, shoe, authors);
         }
     }
@@ -152,7 +109,7 @@ function getAuthorsAndRenderLocals(shoe, res, locals, errors) {
                 checkFinished(res, shoe, authors, errors, locals);
             });
         } else {
-            authors.push({"id": "false", "username": "false"});
+            authors.push({ "id": "false", "username": "false" });
             checkFinished(res, shoe, authors, errors, locals);
         }
     }
@@ -160,13 +117,13 @@ function getAuthorsAndRenderLocals(shoe, res, locals, errors) {
 
 // Get shoe route
 router.get("/:id", (req, res, next) => {
-    Shoe.findOne({'_id': req.params.id}, (err, shoe) => {
+    Shoe.findOne({ '_id': req.params.id }, (err, shoe) => {
         if (err) throw err;
         if (shoe.comments.length != 0) {
             getAuthorsAndRender(shoe, res);
         } else {
             let authors = []
-            res.render('shoes/shoe', {title: shoe.name, shoe: shoe, authors: authors});
+            res.render('shoes/shoe', { title: shoe.name, shoe: shoe, authors: authors });
         }
     });
 });
@@ -176,8 +133,8 @@ router.post("/:id", (req, res) => {
     const title = req.body.title;
     const comment = req.body.comment;
     const rating = req.body.starRating;
-    
-    Shoe.findOne({"_id": req.params.id}, (err, shoe) => {
+
+    Shoe.findOne({ "_id": req.params.id }, (err, shoe) => {
         if (err) {
             console.log(err);
         } else {
@@ -189,14 +146,15 @@ router.post("/:id", (req, res) => {
 
             let errors = req.validationErrors();
             if (errors) {
-                let locals = {user: req.user};
+                let locals = { user: req.user };
                 if (shoe.comments.length != 0) {
                     getAuthorsAndRenderLocals(shoe, res, locals, errors);
                 } else {
                     let authors = [];
                     res.render('shoes/shoe', {
-                        title: shoe.name, shoe: shoe, errors: errors, 
-                        locals: locals, authors: authors});
+                        title: shoe.name, shoe: shoe, errors: errors,
+                        locals: locals, authors: authors
+                    });
                 }
             } else {
                 shoe.comments.push({
@@ -215,10 +173,10 @@ router.post("/:id", (req, res) => {
 
                 // Restart shoe stars (por si acaso :>)
                 shoe.stars = 0;
-               
+
                 shoe.stars = Math.round(newStars);
                 shoe.save((err) => {
-                    if (err) {console.log("ERROR: " + err);}
+                    if (err) { console.log("ERROR: " + err); }
                     else {
                         //console.log(shoe.comments);
                         req.flash('success', 'Comment added succesfully');
@@ -245,19 +203,19 @@ router.get("/:id/:commentId/delete", (req, res) => {
                         shoe.save((err) => {
                             if (err) throw err;
                             req.flash("success", "Comment deleted succesfully")
-                            res.redirect("/shoes/"+shoe.id);
+                            res.redirect("/shoes/" + shoe.id);
                         });
-                        
+
                     } else {
                         req.flash("danger", "You must have posted the comment to delete it");
-                        res.redirect("/shoes/"+shoe.id)
+                        res.redirect("/shoes/" + shoe.id)
                     }
                 }
             }
         })
     } else {
         req.flash("danger", "You must have posted the comment to delete it");
-        res.redirect("/shoes/"+req.params.id)
+        res.redirect("/shoes/" + req.params.id)
     }
 });
 

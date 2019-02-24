@@ -11,7 +11,7 @@ const session = require('express-session');
 const passport = require('passport');
 
 // Image uploading
-const multer = require('multer');
+// const multer = require('multer');
 
 // Configuration and shoe model
 const Shoe = require('./models/Shoe');
