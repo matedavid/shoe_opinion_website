@@ -70,6 +70,35 @@ router.post('/add', upload.single('image'), (req, res) => {
     }
 });
 
+router.post('/delete/:id', (req, res) => {
+    if (req.user) {
+        const id = req.params.id;
+        Shoe.findById(id, (err, shoe) => {
+            if (err) throw err;
+            if (shoe) {
+                shoe.remove((err) => {
+                    if (err) throw err;
+                    User.findById(req.user.id, (err, user) => {
+                        for (let i = 0; i < user.uploadedShoes.length; i++) {
+                            if (user.uploadedShoes[i].shoeId == id) {
+                                user.uploadedShoes.pop(i);
+                                user.save((err) => {
+                                    if (err) throw err;
+                                    res.redirect('/users/'+user.id);
+                                })
+                            }
+                        }
+                    }); 
+                })
+            } else {
+                res.redirect("/user/");
+            }
+        }); 
+    } else {
+        res.redirect("/users/login")
+    }
+});
+
 function checkFinished(res, shoe, authors, errors, locals) {
     if (authors.length == shoe.comments.length) {
         if (locals != undefined) {

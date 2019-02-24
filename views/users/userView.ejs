@@ -1,6 +1,6 @@
 <%-include('../header.ejs');%>
     <div class="row" style="margin-bottom: 50px">
-        <div class="col-4"><img style="width: 100%; height: auth;" src="<%=userInput.avatar %>"></img></div>
+        <div class="col-4"><img style="width: 100%; height: auto;" src="<%=userInput.avatar %>"></img></div>
         <div class="col-8" style="text-align: center">
             <h1><%=userInput.username%><h1>
             <% if (locals.user) { %>
@@ -23,6 +23,13 @@
                         <h5 class="card-text info user-uploaded-shoe">Rating: <%=uploaded[i].stars%> <i class="fa fa-star" style="color: orange"></i></h5>
                         <h5 class="card-text info user-uploaded-shoe">Comments: <%=uploaded[i].numberComments%> <i class="fa fa-comments"></i></h5>
                         <a href="/shoes/<%=uploaded[i].id%>"><button class="btn btn-primary btn-md">Check it out!</button></a>
+                        <% if (locals.user) { %>
+                            <% if (locals.user.id == userInput._id) { %>
+                                <form action="/shoes/delete/<%= uploaded[i].id %>" method="POST">
+                                    <button class="btn btn-danger" type="submit">Delete this shoe</button>
+                                </form>
+                            <% } %>
+                        <% } %>
                     </div>
                 </div>
             <% } %>

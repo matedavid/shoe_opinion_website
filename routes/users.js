@@ -115,10 +115,13 @@ router.get('/:id', (req, res) => {
                     Shoe.findById(user.uploadedShoes[i].shoeId, (err, shoe) => {
                         if (err) throw err;
                         shoes.push(shoe);
-                        if (i == user.uploadedShoes.length - 1) {
-                            res.render('users/userView', { title: user.username, userInput: user, uploaded: shoes });
+                        if (i === user.uploadedShoes.length-1) {
+                            setTimeout(() => {
+                                res.render('users/userView', { title: user.username, userInput: user, uploaded: shoes });
+                                console.log("sended");
+                            }, 1000);
                         }
-                    })
+                    });
                 }
             } else {
                 res.render('users/userView', { title: user.username, userInput: user, uploaded: [] });
