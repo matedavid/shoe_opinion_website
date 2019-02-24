@@ -14,7 +14,6 @@ const passport = require('passport');
 const multer = require('multer');
 
 // Configuration and shoe model
-const config = require('./config/database');
 const Shoe = require('./models/Shoe');
 
 // Initialze express app
@@ -101,4 +100,4 @@ let users = require('./routes/users');
 app.use("/users/", users);
 
 
-app.listen(process.env.PORT, "0.0.0.0", () => console.log('Running on port ' + process.env.PORT +  '...'));
+app.listen(process.env.PORT | 8000, "0.0.0.0", () => console.log('Running on port ' + process.env.PORT +  '...'));
