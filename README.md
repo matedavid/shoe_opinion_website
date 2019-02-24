@@ -10,10 +10,10 @@
 
 # Preview
 ## Home page
-![alt home preview image](ps://github.com/matedavid/shoe_opinion_website/tree/master/static/images/previewHome.png)
+![alt home preview image](https://raw.githubusercontent.com/matedavid/shoe_opinion_website/master/static/images/previewHome.png "Home page")
 
 ## Shoe page
-![alt shoe preview image](ps://github.com/matedavid/shoe_opinion_website/tree/master/static/images/previewShoe.png)
+![alt shoe preview image](https://raw.githubusercontent.com/matedavid/shoe_opinion_website/master/static/images/previewShoe.png "Shoe page")
 
 ## User page
-![alt user preview image](ps://github.com/matedavid/shoe_opinion_website/tree/master/static/images/previewUser.png)
+![alt user preview image](https://raw.githubusercontent.com/matedavid/shoe_opinion_website/master/static/images/previewUser.png "User page")
