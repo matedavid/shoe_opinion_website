@@ -17,3 +17,6 @@
 
 ### User page
 ![alt user preview image](https://raw.githubusercontent.com/matedavid/shoe_opinion_website/master/static/images/previewUser.png "User page")
+
+## Information
+This is the first big website I've have coded, and I did it to learn web programming, in specific node js with express. 
